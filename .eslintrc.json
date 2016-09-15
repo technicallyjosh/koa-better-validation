@@ -7,8 +7,7 @@
   "extends": "eslint:recommended",
   "ecmaFeatures": {
     "modules": true,
-    "generators": true,
-    "experimentalObjectRestSpread": true
+    "generators": true
   },
   "rules": {
     "semi": 2,
