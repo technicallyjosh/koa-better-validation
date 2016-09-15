@@ -1,5 +1,5 @@
 {
-  "name": "koa-validation",
+  "name": "koa-better-validation",
   "version": "0.1.9",
   "description": "The Koa Validation is a single point validation library that enables you to validate params, body, queries, files and headers",
   "main": "lib/validate.js",
@@ -18,17 +18,21 @@
     "koa validation",
     "file validation"
   ],
-  "repository": "srinivasiyer/koa-validation",
+  "repository": "technicallyjosh/koa-validation",
   "author": {
-    "name": "Srinivas Iyer",
-    "email": "srinivasiyer87@gmail.com"
+    "name": "Josh Newman",
+    "url": "https://github.com/technicallyjosh"
   },
+  "contributors": [{
+      "name": "Mario Tacke",
+      "url": "https://github.com/mariotacke"
+  }],
   "license": "ISC",
   "dependencies": {
     "co-fs-extra": "^1.1.0",
     "mime-types": "^2.1.7",
-    "moment-timezone": "^0.4.1",
-    "validator": "^4.0.5"
+    "moment-timezone": "^0.5.5",
+    "validator": "^5.7.0"
   },
   "devDependencies": {
     "co": "^4.6.0",
@@ -37,8 +41,8 @@
     "koa-better-body": "^1.0.17",
     "koa-qs": "^2.0.0",
     "koa-router": "^5.2.1",
-    "mocha": "^2.3.3",
-    "should": "^7.1.1",
-    "supertest": "^1.1.0"
+    "mocha": "^3.0.2",
+    "should": "^11.1.0",
+    "supertest": "^2.0.0"
   }
 }
