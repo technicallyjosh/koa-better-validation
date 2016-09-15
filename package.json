@@ -23,10 +23,12 @@
     "name": "Josh Newman",
     "url": "https://github.com/technicallyjosh"
   },
-  "contributors": [{
+  "contributors": [
+    {
       "name": "Mario Tacke",
       "url": "https://github.com/mariotacke"
-  }],
+    }
+  ],
   "license": "ISC",
   "dependencies": {
     "co-fs-extra": "^1.1.0",
@@ -36,6 +38,7 @@
   },
   "devDependencies": {
     "co": "^4.6.0",
+    "eslint": "^3.5.0",
     "istanbul-harmony": "^0.3.16",
     "koa": "^1.0.0",
     "koa-better-body": "^1.0.17",
