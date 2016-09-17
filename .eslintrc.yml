@@ -1,0 +1,32 @@
+env:
+  node: true
+  es6: true
+  mocha: true
+
+extends: 'eslint:recommended'
+
+ecmaFeatures:
+  modules: true
+  generators: true
+
+rules:
+  semi: 2
+  no-console: 2
+  no-unused-vars: 2
+  prefer-arrow-callback: 1
+  arrow-parens: 2
+  prefer-template: 2
+  eqeqeq: 2
+  no-debugger: 2
+  no-case-declarations: 1
+  object-curly-spacing:
+    - 2
+    - 'always'
+  array-bracket-spacing:
+    - 2
+    - 'never'
+  space-before-function-paren:
+    - 2
+    -
+      anonymous: 'always'
+      named    : 'never'
