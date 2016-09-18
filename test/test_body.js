@@ -13,6 +13,7 @@ describe('Koa request body validation', function(){
             res.statusCode.should.equal(422);
             res.body.should.be.an.Array;
             errorFields = {};
+
             res.body.forEach(function(objs){
                 for(var o in objs){
                     errorFields[o] = objs[o].rule;
