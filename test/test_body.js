@@ -1,38 +1,40 @@
-var request = require('supertest')
-  , app = require('./app/app');
+const request = require('supertest');
+const app     = require('./app/app');
 
-describe('Koa request body validation', function(){
-    it('Should throw the required rule errors when conditions dont match', function(done){
-        request(app.listen()).put('/')
-        .send({ bar: 'barbaz' })
-        .send({ baz: 'foobar' })
-        .send({ barbaz: 'foobar' })
-        .send({ bazbaz: 'barbaz' })
-        .send({ age: 25})
-        .end(function(err, res){
-            res.statusCode.should.equal(422);
-            res.body.should.be.an.Array;
-            errorFields = {};
+describe('Koa request body validation', () => {
+    it('Should throw the required rule errors when conditions dont match', (done) => {
+        request(app.listen())
+            .put('/')
+            .send({ bar: 'barbaz' })
+            .send({ baz: 'foobar' })
+            .send({ barbaz: 'foobar' })
+            .send({ bazbaz: 'barbaz' })
+            .send({ age: 25 })
+            .end((err, res) => {
+                const errorFields = {};
 
-            res.body.forEach(function(objs){
-                for(var o in objs){
-                    errorFields[o] = objs[o].rule;
-                }
+                res.statusCode.should.equal(422);
+                res.body.should.be.an.Array;
+
+                res.body.forEach((objs) => {
+                    for (const o in objs) {
+                        errorFields[o] = objs[o].rule;
+                    }
+                });
+
+                errorFields.should.have.properties({
+                    foo: 'requiredWith',
+                    girlfiend: 'requiredIf',
+                    wife: 'requiredNotIf',
+                    foobar: 'requiredWithAll',
+                    gandalf: 'requiredWithout',
+                    name: 'required',
+                    tyrion: 'requiredWithoutAll'
+                });
+
+                done();
             });
-
-            errorFields.should.have.properties({
-                foo: 'requiredWith',
-                girlfiend: 'requiredIf',
-                wife: 'requiredNotIf',
-                foobar: 'requiredWithAll',
-                gandalf: 'requiredWithout',
-                name: 'required',
-                tyrion: 'requiredWithoutAll'
-            });
-
-            done();
-        });
-    })
+    });
 
     it('Should throw errors on all fields', function(done){
         request(app.listen()).put('/')
@@ -118,53 +120,54 @@ describe('Koa request body validation', function(){
         });
     })
 
-    it('Should throw no errors when proper values are sent', function(done){
-        request(app.listen()).put('/')
-        .send({ name: 'Srinivas Iyer' })
-        .send({ bar: 'barbaz' })
-        .send({ baz: 'foobar' })
-        .send({ foo: 'bar' })
-        .send({ tyrion: 'lanister' })
-        .send({ gandalf: 'grey' })
-        .send({ teenage: 17 })
-        .send({ age: 22 })
-        .send({ bazbaz: 'barbaz' })
-        .send({ date: '12232015' })
-        .send({ past: '2015-06-01' })
-        .send({ future: '2015-11-01' })
-        .send({ birthdate: '2016-12-25' })
-        .send({ gender: 'male' })
-        .send({ genres: 'jazz' })
-        .send({ grade: 'yes' })
-        .send({ nickname: 'srini' })
-        .send({ nospaces: 'this_is-what' })
-        .send({ email: 'lucky@strike.com' })
-        .send({ alphanum: 'abcd928921' })
-        .send({ password: 'abcd1234' })
-        .send({ iaccept: 1 })
-        .send({ partofit: 'became' })
-        .send({ notpartofit: 'forewarn' })
-        .send({ cpassword: 'abcd1234' })
-        .send({ spousegender: 'female' })
-        .send({ luckynum: 8974 })
-        .send({ thesaurus: 'dictionary' })
-        .send({ number: 1234 })
-        .send({ ipaddress: '192.168.0.1' })
-        .send({ object: '{ "foo": "bar" }' })
-        .send({ chocolates: 80 })
-        .send({ watts: 30 })
-        .send({ longword: 'This is a super long string which stretches beyond 25 charachters' })
-        .send({ shortword: 'lessthan10' })
-        .send({ tendigits: 1234567890 })
-        .send({ watch: 'asia/kolkata' })
-        .send({ website: 'srinivasiyer.com' })
-        .end(function(err, res){
-            res.statusCode.should.equal(200);
-            res.body.should.be.an.Object;
-            done();
-        });
-    });
+    it('Should throw no errors when proper values are sent', (done) => {
+        request(app.listen())
+            .put('/')
+            .send({ name: 'Srinivas Iyer' })
+            .send({ bar: 'barbaz' })
+            .send({ baz: 'foobar' })
+            .send({ foo: 'bar' })
+            .send({ tyrion: 'lanister' })
+            .send({ gandalf: 'grey' })
+            .send({ teenage: 17 })
+            .send({ age: 22 })
+            .send({ bazbaz: 'barbaz' })
+            .send({ date: '12232015' })
+            .send({ past: '2015-06-01' })
+            .send({ future: '2015-11-01' })
+            .send({ birthdate: '2016-12-25' })
+            .send({ gender: 'male' })
+            .send({ genres: 'jazz' })
+            .send({ grade: 'yes' })
+            .send({ nickname: 'srini' })
+            .send({ nospaces: 'this_is-what' })
+            .send({ email: 'lucky@strike.com' })
+            .send({ alphanum: 'abcd928921' })
+            .send({ password: 'abcd1234' })
+            .send({ iaccept: 1 })
+            .send({ partofit: 'became' })
+            .send({ notpartofit: 'forewarn' })
+            .send({ cpassword: 'abcd1234' })
+            .send({ spousegender: 'female' })
+            .send({ luckynum: 8974 })
+            .send({ thesaurus: 'dictionary' })
+            .send({ number: 1234 })
+            .send({ ipaddress: '192.168.0.1' })
+            .send({ object: '{ "foo": "bar" }' })
+            .send({ chocolates: 80 })
+            .send({ watts: 30 })
+            .send({ longword: 'This is a super long string which stretches beyond 25 charachters' })
+            .send({ shortword: 'lessthan10' })
+            .send({ tendigits: 1234567890 })
+            .send({ watch: 'asia/kolkata' })
+            .send({ website: 'srinivasiyer.com' })
+            .end((err, res) => {
+                res.statusCode.should.equal(200);
+                res.body.should.be.an.Object;
 
+                done();
+            });
+    });
 
     it('Should throw errors when required null values are sent', function(done){
         request(app.listen()).put('/')
