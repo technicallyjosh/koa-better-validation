@@ -1,27 +1,26 @@
-# Koa Validation
+# Koa Better Validation
 
-Koa Validation is a validation middleware for Koa. Using Koa Validation, you can validate
-url params, url queries, request bodies, headers as well as files. The module also allows for nested
-queries and nested jsons to be validated. The plugin uses generators and hence syncronous database validations
-can alse be made. The module can also be used to filter values sent as well as performing after actions on files uploaded.
+Koa Better Validation is a more up-to-date "fork" of [koa-validation](https://github.com/srinivasiyer/koa-validation).
+You can validate request params, querystring values, bodies, and even files.
 
-The module can also be extended to add custom rules, filters and actions based on convenience.
+You can also extend this module to add custom validations, filters, and rules.
 
-##Installation
+## Install
 
-```npm install koa-validation```
+```
+npm install koa-better-validation
+```
 
-##Field Validations
+## Field Validations
 
 ```js
-
-var app = require('koa')();
-var router = (new require('koa-router'))();
-var koaBody = require('koa-better-body');
+const app     = require('koa')();
+const router  = require('koa-router')();
+const koaBody = require('koa-better-body');
 
 require('koa-qs')(app, 'extended');
 
-var validate = require('koa-validation');
+const validate = require('koa-better-validation');
 
 app.use(koaBody({
     'multipart': true
@@ -30,78 +29,73 @@ app.use(koaBody({
 app.use(validate());
 
 router.post('/', function *(){
-    yield this.validateBody(
-        {
-            name: 'required|minLength:4',
-            girlfiend: 'requiredIf:age,25',
-            wife: 'requiredNotIf:age,22',
-            foo: 'requiredWith:bar,baz',
-            foobar: 'requiredWithAll:barbaz,bazbaz',
-            gandalf: 'requiredWithout:Saruman',
-            tyrion: 'requiredWithoutAll:tywin,cercei',
-            age: 'numeric',
-            teenage: 'digitsBetween:13,19',
-            date: 'dateFormat:MMDDYYYY',
-            birthdate: 'date',
-            past: 'before:2015-10-06',
-            future: 'after:2015-10-07',
-            gender: 'in:male, female',
-            genres: 'notIn:Pop,Metal',
-            grade: 'accepted',
-            nickname: 'alpha',
-            nospaces: 'alphaDash',
-            email: 'email',
-            alphanum: 'alphaNumeric',
-            password: 'between:6,15'
+    yield this.validateBody({
+        name     : 'required|minLength:4',
+        girlfiend: 'requiredIf:age,25',
+        wife     : 'requiredNotIf:age,22',
+        foo      : 'requiredWith:bar,baz',
+        foobar   : 'requiredWithAll:barbaz,bazbaz',
+        gandalf  : 'requiredWithout:Saruman',
+        tyrion   : 'requiredWithoutAll:tywin,cercei',
+        age      : 'numeric',
+        teenage  : 'digitsBetween:13,19',
+        date     : 'dateFormat:MMDDYYYY',
+        birthdate: 'date',
+        past     : 'before:2015-10-06',
+        future   : 'after:2015-10-07',
+        gender   : 'in:male, female',
+        genres   : 'notIn:Pop,Metal',
+        grade    : 'accepted',
+        nickname : 'alpha',
+        nospaces : 'alphaDash',
+        email    : 'email',
+        alphanum : 'alphaNumeric',
+        password : 'between:6,15'
+    }, {
+        'name.required': 'The name field is a required one'
+    }, {
+        before: {
+            name    : 'lowercase',
+            nickname: 'uppercase',
+            snum    : 'integer',
+            sword   : 'trim',
+            lword   : 'ltrim',
+            rword   : 'rtrim',
+            dnum    : 'float',
+            bword   : 'boolean',
         },
-        {
-            'name.required': 'The name field is a required one'
-        },
-        {
-            before: {
-                name: 'lowercase',
-                nickname: 'uppercase',
-                snum: 'integer',
-                sword: 'trim',
-                lword: 'ltrim',
-                rword: 'rtrim',
-                dnum: 'float',
-                bword: 'boolean',
-            },
-            
-            after: {
-                obj: 'json',
-                eword: 'escape',
-                reword: 'replace:come,came',
-                shaword: 'sha1',
-                mdword: 'md5',
-                hexword: 'hex:sha256'
-            }
+
+        after: {
+            obj    : 'json',
+            eword  : 'escape',
+            reword : 'replace:come,came',
+            shaword: 'sha1',
+            mdword : 'md5',
+            hexword: 'hex:sha256'
         }
-    )
+    });
 
     if (this.validationErrors) {
         this.status = 422;
         this.body = this.validationErrors;
-    } else {
-        this.status = 200;
-        this.body = { success: true }
+        return;
     }
+
+    this.body = { success: true };
 });
 
 ```
 
-##File Validations
+## File Validations
 
 ```js
-
-var app = require('koa')();
-var router = (new require('koa-router'))();
-var koaBody = require('koa-better-body');
+const app     = require('koa')();
+const router  = require('koa-router')();
+const koaBody = require('koa-better-body');
 
 require('koa-qs')(app, 'extended');
 
-var validate = require('koa-validation');
+const validate = require('koa-better-validation');
 
 app.use(koaBody({
     'multipart': true
@@ -109,19 +103,19 @@ app.use(koaBody({
 
 app.use(validate());
 
-router.post('/files', function *(){
+router.post('/files', function* () {
     yield this.validateFiles({
-        'jsFile':'required|size:min,10kb,max,20kb',
-        'imgFile': 'required|image',
+        'jsFile'  :'required|size:min,10kb,max,20kb',
+        'imgFile' : 'required|image',
         'imgFile1': 'mime:jpg',
         'imgFile2': 'extension:jpg',
-        'pkgFile': 'name:package'
-    },true, {}, {
+        'pkgFile' : 'name:package'
+    }, true, {}, {
         jsFile: {
             action: 'move',
-            args: __dirname + '/../files/tmp/rules.js',
-            callback: function *(validator, file, destination){
-                validator.addError(jsFile, 'action', 'move', 'Just checking if the callback action works!!')
+            args: `${__dirname}/../files/tmp/rules.js`,
+            callback: function* (validator, file, destination) {
+                validator.addError(file, 'action', 'move', 'Just checking if the callback action works!!')
             }
         },
         imgFile: [
@@ -138,17 +132,19 @@ router.post('/files', function *(){
     if (this.validationErrors) {
         this.status = 422;
         this.body = this.validationErrors;
-    } else {
-        this.status = 200;
-        this.body = { success: true }
+        return;
     }
+
+    this.body = { success: true };
 });
 
 app.use(router.routes()).use(router.allowedMethods());
 
 ```
 
-Check out Detailed Documentation at [koa-validation.readme.io](https://koa-validation.readme.io)
+Currently it works like the original package `koa-validation`. Until we get our
+own in-depth documentation, you can
+[check out the original documentation](https://koa-validation.readme.io).
 
 ## License
 
