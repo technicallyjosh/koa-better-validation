@@ -19,7 +19,7 @@
     "koa validation",
     "file validation"
   ],
-  "repository": "technicallyjosh/koa-validation",
+  "repository": "technicallyjosh/koa-better-validation",
   "author": {
     "name": "Josh Newman",
     "url": "https://github.com/technicallyjosh"
