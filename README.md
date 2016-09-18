@@ -1,5 +1,7 @@
 # Koa Better Validation
 
+[![npm version](https://badge.fury.io/js/koa-better-validation.svg)](https://badge.fury.io/js/koa-better-validation) [![Build Status](https://travis-ci.org/technicallyjosh/koa-better-validation.svg?branch=master)](https://travis-ci.org/technicallyjosh/koa-better-validation)
+
 Koa Better Validation is a more up-to-date "fork" of [koa-validation](https://github.com/srinivasiyer/koa-validation).
 You can validate request params, querystring values, bodies, and even files.
 
