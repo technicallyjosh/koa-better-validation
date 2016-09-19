@@ -1,6 +1,8 @@
-module.exports = function(app, router){
+'use strict';
 
-    router.post('/files', function *(){
+module.exports = function (app, router) {
+
+    router.post('/files', function* () {
         yield this.validateFiles({
             'jsFile':'required|size:min,10kb,max,20kb',
             'imgFile': 'required|image',
@@ -9,51 +11,53 @@ module.exports = function(app, router){
             'pkgFile': 'name:package'
         });
 
-        if(this.validationErrors){
+        if (this.validationErrors) {
             this.status = 422;
             this.body = this.validationErrors;
-        }else{
-            this.status = 200;
-            this.body = { success: true }
+            return;
         }
+
+        this.body = { success: true };
     });
 
-    router.post('/deleteOnFail', function *(){
+    router.post('/deleteOnFail', function* () {
         yield this.validateFiles({
             'jsFile':'required|size:min,10kb,max,20kb',
             'imgFile': 'required|image'
         }, true);
 
-        if(this.validationErrors){
+        if (this.validationErrors) {
             this.status = 422;
-            var tmpfiles = []
-            for (var f in this.request.body.files){
+
+            const tmpfiles = [];
+
+            for (let f in this.request.body.files) { // eslint-disable-line prefer-const
                 tmpfiles.push(this.request.body.files[f].path);
             }
 
             this.body = tmpfiles;
-        }else{
-            this.status = 200;
-            this.body = { success: true }
+            return;
         }
+
+        this.body = { success: true };
     });
 
-    router.post('/fileActions', function *(){
+    router.post('/fileActions', function* () {
         yield this.validateFiles({
             'jsFile':'required|size:min,10kb,max,20kb',
             'imgFile': 'required|image',
-        },true, {}, {
+        }, true, {}, {
             jsFile: {
                 action: 'move',
-                args: __dirname + '/../files/tmp/rules.js',
-                callback: function *(validator, file, destination){
-                    validator.addError(jsFile, 'action', 'move', 'Just checking if the callback action works!!')
+                args: `${__dirname}/../files/tmp/rules.js`,
+                callback: function* (validator, file, destination) { // eslint-disable-line no-unused-vars
+                    validator.addError(file, 'action', 'move', 'Just checking if the callback action works!!');
                 }
             },
             imgFile: [
                 {
                     action: 'copy',
-                    args: __dirname + '/../files/tmp/panda.jpg'
+                    args: `${__dirname}/../files/tmp/panda.jpg`
                 },
                 {
                     action: 'delete'
@@ -61,21 +65,24 @@ module.exports = function(app, router){
             ]
         });
 
-        if(this.validationErrors){
+        if (this.validationErrors) {
             this.status = 422;
-            var tmpfiles = {}
-            for (var f in this.request.body.files){
+            const tmpfiles = {};
+
+            for (let f in this.request.body.files) { // eslint-disable-line prefer-const
                 tmpfiles[f] = this.request.body.files[f].path;
             }
+
             this.body = {
                 tmpFiles: tmpfiles,
-                errors: this.validationErrors
+                errors  : this.validationErrors
             };
-        }else{
-            this.status = 200;
-            this.body = { success: true }
+
+            return;
         }
+
+        this.body = { success: true };
     });
 
     app.use(router.routes()).use(router.allowedMethods());
-}
+};

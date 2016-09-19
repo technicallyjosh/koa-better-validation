@@ -1,6 +1,8 @@
-module.exports = function(app, router){
+'use strict';
 
-    router.get('/headers', function *(){
+module.exports = function (app, router) {
+
+    router.get('/headers', function* () {
         yield this.validateHeaders(
             {
                 'content-type': 'required|equals:application/json',
@@ -15,14 +17,14 @@ module.exports = function(app, router){
             }
         );
 
-        if(this.validationErrors){
+        if (this.validationErrors) {
             this.status = 422;
             this.body = this.validationErrors;
-        }else{
-            this.status = 200;
-            this.body = { success: true }
+            return;
         }
+
+        this.body = { success: true };
     });
 
     app.use(router.routes()).use(router.allowedMethods());
-}
+};

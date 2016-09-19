@@ -1,3 +1,5 @@
+'use strict';
+
 const request = require('supertest');
 const app     = require('./app/app');
 
@@ -36,7 +38,7 @@ describe('Koa request body validation', () => {
             });
     });
 
-    it('Should throw errors on all fields', function(done){
+    it('Should throw errors on all fields', (done) => {
         request(app.listen()).put('/')
         .send({ bar: 'barbaz' })
         .send({ baz: 'foobar' })
@@ -72,53 +74,60 @@ describe('Koa request body validation', () => {
         .send({ tendigits: 123456789 })
         .send({ watch: 'asia' })
         .send({ website: 'world.' })
-        .end(function(err, res){
+        .end((err, res) => {
+            if (err) {
+                done(err);
+                return;
+            }
+
             res.statusCode.should.equal(422);
             res.body.should.be.an.Array;
-            errorFields = {};
-            res.body.forEach(function(objs){
-                for(var o in objs){
+
+            const errorFields = {};
+
+            res.body.forEach((objs) => {
+                for (let o in objs) { // eslint-disable-line prefer-const
                     errorFields[o] = objs[o].rule;
                 }
             });
 
             errorFields.should.have.properties({
-                age: 'numeric',
-                teenage: 'digitsBetween',
-                date: 'dateFormat',
-                birthdate: 'date',
-                past: 'before',
-                future: 'after',
-                gender: 'in',
-                genres: 'notIn',
-                grade: 'accepted',
-                nickname: 'alpha',
-                nospaces: 'alphaDash',
-                email: 'email',
-                alphanum: 'alphaNumeric',
-                password: 'between',
-                iaccept: 'boolean',
-                partofit: 'contains',
-                notpartofit: 'notContains',
-                cpassword: 'same',
+                age         : 'numeric',
+                teenage     : 'digitsBetween',
+                date        : 'dateFormat',
+                birthdate   : 'date',
+                past        : 'before',
+                future      : 'after',
+                gender      : 'in',
+                genres      : 'notIn',
+                grade       : 'accepted',
+                nickname    : 'alpha',
+                nospaces    : 'alphaDash',
+                email       : 'email',
+                alphanum    : 'alphaNumeric',
+                password    : 'between',
+                iaccept     : 'boolean',
+                partofit    : 'contains',
+                notpartofit : 'notContains',
+                cpassword   : 'same',
                 spousegender: 'different',
-                luckynum: 'digits',
-                ipaddress: 'ip',
-                thesaurus: 'equals',
-                number: 'integer',
-                object: 'json',
-                chocolates: 'max',
-                watts: 'min',
-                shortword: 'maxLength',
-                longword: 'minLength',
-                tendigits: 'regex',
-                watch: 'timezone',
-                website: 'url'
+                luckynum    : 'digits',
+                ipaddress   : 'ip',
+                thesaurus   : 'equals',
+                number      : 'integer',
+                object      : 'json',
+                chocolates  : 'max',
+                watts       : 'min',
+                shortword   : 'maxLength',
+                longword    : 'minLength',
+                tendigits   : 'regex',
+                watch       : 'timezone',
+                website     : 'url'
             });
 
             done();
         });
-    })
+    });
 
     it('Should throw no errors when proper values are sent', (done) => {
         request(app.listen())
@@ -169,7 +178,7 @@ describe('Koa request body validation', () => {
             });
     });
 
-    it('Should throw errors when required null values are sent', function(done){
+    it('Should throw errors when required null values are sent', (done) => {
         request(app.listen()).put('/')
         .send({ name: null })
         .send({ bar: 'barbaz' })
@@ -209,12 +218,19 @@ describe('Koa request body validation', () => {
         .send({ tendigits: 1234567890 })
         .send({ watch: 'asia/kolkata' })
         .send({ website: 'srinivasiyer.com' })
-        .end(function(err, res){
+        .end((err, res) => {
+            if (err) {
+                done(err);
+                return;
+            }
+
             res.statusCode.should.equal(422);
             res.body.should.be.an.Array;
-            errorFields = {};
-            res.body.forEach(function(objs){
-                for(var o in objs){
+
+            const errorFields = {};
+
+            res.body.forEach((objs) => {
+                for (let o in objs) { // eslint-disable-line prefer-const
                     errorFields[o] = objs[o].rule;
                 }
             });
@@ -233,87 +249,91 @@ describe('Koa request body validation', () => {
         });
     });
 
-    it('should return changed queries when before filters are applied', function(done){
+    it('should return changed queries when before filters are applied', (done) => {
+        request(app.listen())
+            .put('/filters/before')
+            .send({ name: 'LOWERCASE' })
+            .send({ nickname: 'uppercase' })
+            .send({ snum: '92349021' })
+            .send({ sword: '    trim     ' })
+            .send({ lword: '     ltrim' })
+            .send({ rword: 'rtrim    ' })
+            .send({ dnum: '1234.23' })
+            .send({ bword: 'false' })
+            .send({ obj: { 'foo': 'bar' } })
+            .send({ eword: '<html></html>' })
+            .send({ reword: 'become' })
+            .send({ shaword: 'password' })
+            .send({ mdword: 'password' })
+            .send({ hexword: 'password' })
+            .end((err, res) => {
+                if (err) {
+                    done(err);
+                    return;
+                }
 
+                res.body.should.be.an.object;
+                res.statusCode.should.equal(200);
+
+                res.body.should.have.properties({
+                    name    : 'lowercase',
+                    nickname: 'UPPERCASE',
+                    snum    : 92349021,
+                    sword   : 'trim',
+                    lword   : 'ltrim',
+                    rword   : 'rtrim',
+                    dnum    : 1234.23,
+                    bword   : false,
+                    obj     : '{"foo":"bar"}',
+                    eword   : '&lt;html&gt;&lt;&#x2F;html&gt;',
+                    reword  : 'became',
+                    shaword : '5baa61e4c9b93f3f0682250b6cf8331b7ee68fd8',
+                    mdword  : '5f4dcc3b5aa765d61d8327deb882cf99',
+                    hexword : '5e884898da28047151d0e56f8dc6292773603d0d6aabbdd62a11ef721d1542d8'
+                });
+
+                done();
+            });
+    });
+
+    it('should return changed queries when filters are applied', (done) => {
         request(app.listen())
         .put('/filters/before')
-        .send({name: 'LOWERCASE'})
-        .send({nickname: 'uppercase'})
-        .send({snum: '92349021'})
-        .send({sword: '    trim     '})
-        .send({lword: '     ltrim'})
-        .send({rword: 'rtrim    '})
-        .send({dnum: '1234.23'})
-        .send({bword: 'false'})
-        .send({obj: { 'foo': 'bar' }})
-        .send({eword: '<html></html>'})
-        .send({reword: 'become'})
-        .send({shaword: 'password'})
-        .send({mdword: 'password'})
-        .send({hexword: 'password'})
-        .end(function(err, res){
+        .send({ name: 'LOWERCASE' })
+        .send({ nickname: 'uppercase' })
+        .send({ snum: '92349021' })
+        .send({ sword: '    trim     ' })
+        .send({ lword: '     ltrim' })
+        .send({ rword: 'rtrim    ' })
+        .send({ dnum: '1234.23' })
+        .send({ bword: 'false' })
+        .send({ obj: { 'foo': 'bar' } })
+        .send({ eword: '<html></html>' })
+        .send({ reword: 'become' })
+        .send({ shaword: 'password' })
+        .send({ mdword: 'password' })
+        .send({ hexword: 'password' })
+        .end((err, res) => {
             res.body.should.be.an.object;
             res.statusCode.should.equal(200);
             res.body.should.have.properties({
-                name: 'lowercase',
+                name    : 'lowercase',
                 nickname: 'UPPERCASE',
-                snum: 92349021,
-                sword: 'trim',
-                lword: 'ltrim',
-                rword: 'rtrim',
-                dnum: 1234.23,
-                bword: false,
-                obj: '{"foo":"bar"}',
-                eword: '&lt;html&gt;&lt;&#x2F;html&gt;',
-                reword: 'became',
-                shaword: '5baa61e4c9b93f3f0682250b6cf8331b7ee68fd8',
-                mdword: '5f4dcc3b5aa765d61d8327deb882cf99',
-                hexword: '5e884898da28047151d0e56f8dc6292773603d0d6aabbdd62a11ef721d1542d8'
+                snum    : 92349021,
+                sword   : 'trim',
+                lword   : 'ltrim',
+                rword   : 'rtrim',
+                dnum    : 1234.23,
+                bword   : false,
+                obj     : '{"foo":"bar"}',
+                eword   : '&lt;html&gt;&lt;&#x2F;html&gt;',
+                reword  : 'became',
+                shaword : '5baa61e4c9b93f3f0682250b6cf8331b7ee68fd8',
+                mdword  : '5f4dcc3b5aa765d61d8327deb882cf99',
+                hexword : '5e884898da28047151d0e56f8dc6292773603d0d6aabbdd62a11ef721d1542d8'
             });
 
             done();
         });
     });
-
-    it('should return changed queries when filters are applied', function(done){
-        request(app.listen())
-        .put('/filters/before')
-        .send({name: 'LOWERCASE'})
-        .send({nickname: 'uppercase'})
-        .send({snum: '92349021'})
-        .send({sword: '    trim     '})
-        .send({lword: '     ltrim'})
-        .send({rword: 'rtrim    '})
-        .send({dnum: '1234.23'})
-        .send({bword: 'false'})
-        .send({obj: { 'foo': 'bar' }})
-        .send({eword: '<html></html>'})
-        .send({reword: 'become'})
-        .send({shaword: 'password'})
-        .send({mdword: 'password'})
-        .send({hexword: 'password'})
-        .end(function(err, res){
-            res.body.should.be.an.object;
-            res.statusCode.should.equal(200);
-            res.body.should.have.properties({
-                name: 'lowercase',
-                nickname: 'UPPERCASE',
-                snum: 92349021,
-                sword: 'trim',
-                lword: 'ltrim',
-                rword: 'rtrim',
-                dnum: 1234.23,
-                bword: false,
-                obj: '{"foo":"bar"}',
-                eword: '&lt;html&gt;&lt;&#x2F;html&gt;',
-                reword: 'became',
-                shaword: '5baa61e4c9b93f3f0682250b6cf8331b7ee68fd8',
-                mdword: '5f4dcc3b5aa765d61d8327deb882cf99',
-                hexword: '5e884898da28047151d0e56f8dc6292773603d0d6aabbdd62a11ef721d1542d8'
-            });
-
-            done();
-        });
-    })
-
 });

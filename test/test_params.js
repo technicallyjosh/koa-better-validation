@@ -1,34 +1,39 @@
-var request = require('supertest')
-  , app = require('./app/app');
+'use strict';
 
-describe('Koa URL params validation', function(){
-    it('should throw an error on all fields when values are incorrect', function(done){
+const request = require('supertest');
+const app     = require('./app/app');
+
+describe('Koa URL params validation', () => {
+    it('should throw an error on all fields when values are incorrect', (done) => {
         request(app.listen()).post('/params/dhsud823893ej**$8/post/ajdii')
-        .end(function(err, res){
-            res.statusCode.should.equal(422);
-            res.body.should.be.an.Array;
-            errorFields = {};
-            res.body.forEach(function(objs){
-                for(var o in objs){
-                    errorFields[o] = objs[o].rule;
-                }
-            });
+            .end((err, res) => {
+                res.statusCode.should.equal(422);
+                res.body.should.be.an.Array;
 
-            errorFields.should.have.properties({
-                'username': 'alphaDash',
-                'postId': 'numeric',
-            });
+                const errorFields = {};
 
-            done();
-        });
+                res.body.forEach((objs) => {
+                    for (let o in objs) { // eslint-disable-line prefer-const
+                        errorFields[o] = objs[o].rule;
+                    }
+                });
+
+                errorFields.should.have.properties({
+                    'username': 'alphaDash',
+                    'postId'  : 'numeric',
+                });
+
+                done();
+            });
     });
 
-    it('should throw no errors when all values are correct', function(done){
+    it('should throw no errors when all values are correct', (done) => {
         request(app.listen()).post('/params/flash_is_here/post/88888')
-        .end(function(err, res){
-            res.statusCode.should.equal(200);
-            res.body.should.be.an.Object;
-            done();
-        });
+            .end((err, res) => {
+                res.statusCode.should.equal(200);
+                res.body.should.be.an.Object;
+
+                done();
+            });
     });
 });
