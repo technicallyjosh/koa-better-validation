@@ -2,9 +2,10 @@
   "name": "koa-better-validation",
   "version": "1.0.1",
   "description": "Koa Better Validation is a more up-to-date 'fork' of koa-validation. You can validate request params, querystring values, bodies, and even files.",
-  "main": "lib/validate.js",
+  "main": "lib/Validate.js",
   "scripts": {
-    "test": "NODE_ENV=test mocha --require should --reporter spec",
+    "test": "cross-env NODE_ENV=test mocha --require should --reporter spec",
+    "test-win": "mocha --require should --reporter spec",
     "test-cov": "NODE_ENV=test node ./node_modules/.bin/istanbul cover ./node_modules/.bin/_mocha -- --require should",
     "test-travis": "NODE_ENV=test node ./node_modules/.bin/istanbul cover ./node_modules/.bin/_mocha --report lcovonly -- --require should",
     "lint": "eslint . --ext .js"
@@ -39,6 +40,7 @@
   },
   "devDependencies": {
     "co": "^4.6.0",
+    "cross-env": "^2.0.1",
     "istanbul-harmony": "^0.3.16",
     "koa": "^1.0.0",
     "koa-better-body": "^1.0.17",
