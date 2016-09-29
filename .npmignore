@@ -1,4 +1,6 @@
 test/
+.vscode/
+
 .editorconfig
 .eslintrc.yml
 .npmignore
