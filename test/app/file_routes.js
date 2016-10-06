@@ -4,7 +4,7 @@ module.exports = function (app, router) {
 
     router.post('/files', function* () {
         yield this.validateFiles({
-            'jsFile':'required|size:min,10kb,max,20kb',
+            'jsFile':'required|size:min,10kb,max,30kb',
             'imgFile': 'required|image',
             'imgFile1': 'mime:jpg',
             'imgFile2': 'extension:jpg',
@@ -22,7 +22,7 @@ module.exports = function (app, router) {
 
     router.post('/deleteOnFail', function* () {
         yield this.validateFiles({
-            'jsFile':'required|size:min,10kb,max,20kb',
+            'jsFile':'required|size:min,10kb,max,30kb',
             'imgFile': 'required|image'
         }, true);
 
@@ -44,7 +44,7 @@ module.exports = function (app, router) {
 
     router.post('/fileActions', function* () {
         yield this.validateFiles({
-            'jsFile':'required|size:min,10kb,max,20kb',
+            'jsFile':'required|size:min,10kb,max,30kb',
             'imgFile': 'required|image',
         }, true, {}, {
             jsFile: {
